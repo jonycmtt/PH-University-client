@@ -1,6 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryApi,
+  BaseQueryFn,
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { logOut, setUser } from "../features/auth/authSlice";
+import { DefaultOptionType } from "antd/es/select";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:2000/api/v1",
@@ -14,7 +21,11 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
+const baseQueryWithRefreshToken: BaseQueryFn<
+  FetchArgs,
+  BaseQueryApi,
+  DefaultOptionType
+> = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401) {

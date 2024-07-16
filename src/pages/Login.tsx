@@ -1,11 +1,13 @@
-import { Button } from "antd";
-import { FieldValues, useForm } from "react-hook-form";
+import { Button, Row } from "antd";
+import { FieldValues } from "react-hook-form";
 import { useLoginMutation } from "../redux/features/auth/authApi";
-import { useAppDispatch, useAppSelector } from "../redux/hoooks";
+import { useAppDispatch } from "../redux/hoooks";
 import { setUser, TUser } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/token.verify";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import PHForm from "../components/form/PHForm";
+import PHInput from "../components/form/PHInput";
 
 // type TUserData = {
 //   id: string;
@@ -14,20 +16,14 @@ import { toast } from "sonner";
 
 const Login = () => {
   const dispatch = useAppDispatch();
-  const state = useAppSelector((item) => item.auth);
+  // const state = useAppSelector((item) => item.auth);
   const navigate = useNavigate();
-
-  const { register, handleSubmit } = useForm({
-    defaultValues: {
-      id: "A-0001",
-      password: "ami123456",
-    },
-  });
 
   const [login] = useLoginMutation();
 
   const onSubmit = async (data: FieldValues) => {
-    const tostId = toast.loading("Login is Loading");
+    console.log(data);
+    const tostId = toast.loading("Login is Loading", { duration: 2000 });
     try {
       const loginInfo = {
         id: data.id,
@@ -35,40 +31,31 @@ const Login = () => {
       };
       const res = await login(loginInfo).unwrap();
       const user = verifyToken(res.data.accessToken) as TUser;
-
       dispatch(setUser({ user: user, token: res.data.accessToken }));
       toast.success("Success Login", { id: tostId, duration: 2000 });
       navigate(`/${user.role}/dashboard`);
     } catch (error) {
-      toast.error("Something error");
+      toast.error("Something error", { id: tostId, duration: 2000 });
     }
   };
   return (
     <>
-      <div>
-        <p> Login user : {state?.user?.userId}</p>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="id">ID :</label>
-          <input
-            type="text"
-            placeholder="Your ID"
-            id="id"
-            {...register("id")}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password :</label>
-          <input
-            type="password"
-            placeholder="Your Password"
-            id="password"
-            {...register("password")}
-          />
-        </div>
-        <Button htmlType="submit">Login</Button>
-      </form>
+      <Row justify={"center"} align={"middle"} style={{ height: "100vh" }}>
+        <PHForm onSubmit={onSubmit}>
+          <div>
+            <PHInput type="text" placeholder="UserId" name="id" label={"Id"} />
+          </div>
+          <div>
+            <PHInput
+              label={"Password"}
+              type="password"
+              placeholder="Your Password"
+              name="password"
+            />
+          </div>
+          <Button htmlType="submit">Login</Button>
+        </PHForm>
+      </Row>
     </>
   );
 };
