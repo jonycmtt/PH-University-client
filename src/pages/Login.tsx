@@ -1,7 +1,7 @@
 import { Button, Row } from "antd";
 import { FieldValues } from "react-hook-form";
 import { useLoginMutation } from "../redux/features/auth/authApi";
-import { useAppDispatch } from "../redux/hoooks";
+import { useAppDispatch, useAppSelector } from "../redux/hoooks";
 import { setUser, TUser } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/token.verify";
 import { useNavigate } from "react-router-dom";
@@ -16,8 +16,13 @@ import PHInput from "../components/form/PHInput";
 
 const Login = () => {
   const dispatch = useAppDispatch();
-  // const state = useAppSelector((item) => item.auth);
+  const state = useAppSelector((item) => item.auth);
   const navigate = useNavigate();
+
+  const defaultValues = {
+    id: "A-0001",
+    password: "admin123",
+  };
 
   const [login] = useLoginMutation();
 
@@ -40,8 +45,11 @@ const Login = () => {
   };
   return (
     <>
+      <div>
+        <p> Login user : {state?.user?.userId}</p>
+      </div>
       <Row justify={"center"} align={"middle"} style={{ height: "100vh" }}>
-        <PHForm onSubmit={onSubmit}>
+        <PHForm defaultValues={defaultValues} onSubmit={onSubmit}>
           <div>
             <PHInput type="text" placeholder="UserId" name="id" label={"Id"} />
           </div>

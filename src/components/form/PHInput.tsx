@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Form, Input } from "antd";
 import { Controller } from "react-hook-form";
 
 type TInputProps = {
@@ -14,10 +14,16 @@ const PHInput = ({ type, placeholder, name, label }: TInputProps) => {
       <Controller
         name={name}
         render={({ field }) => (
-          <div style={{ marginBottom: "20px" }}>
-            {label && <label htmlFor="id">{label} :</label>}
-            <Input type={type} placeholder={placeholder} id={name} {...field} />
-          </div>
+          <Form.Item label={label}>
+            <div>
+              <Input
+                type={type}
+                placeholder={placeholder}
+                id={name}
+                {...field}
+              />
+            </div>
+          </Form.Item>
         )}
       />
     </>

@@ -8,6 +8,7 @@ import {
 import { RootState } from "../store";
 import { logOut, setUser } from "../features/auth/authSlice";
 import { DefaultOptionType } from "antd/es/select";
+import { toast } from "sonner";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:2000/api/v1",
@@ -27,6 +28,10 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   DefaultOptionType
 > = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
+
+  if (result.error?.status === 404) {
+    toast.error("Not found User");
+  }
 
   if (result.error?.status === 401) {
     const res = await fetch("http://localhost:2000/api/v1/auth/refresh-token", {
